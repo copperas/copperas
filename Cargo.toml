@@ -1,7 +1,8 @@
 [package]
-name = "copperas"
+name    = "copperas"
 version = "0.1.0"
 authors = ["Vladimir Bogaevsky <vbogaevsky@gmail.com>"]
 
 [dependencies]
-winit = "0.17"
+gl     = "0.11.0"
+glutin = "0.18.0"
