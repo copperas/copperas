@@ -7,4 +7,5 @@ use lib::game::Game;
 fn main() {
     println!("Start new game!");
     let mut game = Game::new();
+    game.start();
 }

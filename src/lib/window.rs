@@ -17,4 +17,21 @@ impl Window {
         let dpi_factor = self.window.get_hidpi_factor();
         self.window.resize(l_size.to_physical(dpi_factor));
     }
+
+    pub fn prepare(&mut self) {
+        unsafe {
+            self.window.make_current().unwrap();
+            gl::load_with(|s| self.window.get_proc_address(s) as *const _);
+        }
+    }
+
+    pub fn clear(&self) {
+        unsafe {
+            gl::Clear(gl::COLOR_BUFFER_BIT);
+        }
+    }
+
+    pub fn swap_buffers(&mut self) {
+        self.window.swap_buffers().unwrap();
+    }
 }

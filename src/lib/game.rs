@@ -21,29 +21,40 @@ impl Game {
         Game { events_loop: events_loop, window: window }
     }
 
-    pub fn start(&self) {
-        // self.run()
+    pub fn start(&mut self) {
+        self.run();
     }
 
     pub fn stop(&self) {
 
     }
 
+
+    fn get_events_loop_and_window(&mut self) -> (&mut EventsLoop, &mut Window) {
+        (&mut self.events_loop, &mut self.window)
+    }
+
     fn run(&mut self) {
+        let (events_loop, window) = self.get_events_loop_and_window();
+        Game::render(events_loop, window)
+    }
+
+    fn render(events_loop: &mut EventsLoop, window: &mut Window) {
+        window.prepare();
         let mut running = true;
         while running {
-            self.events_loop.poll_events(|event| {
+            events_loop.poll_events(|event| {
                 match event {
                     Event::WindowEvent{ event, .. } => match event {
                         WindowEvent::CloseRequested  => running = false,
-                        WindowEvent::Resized(l_size) => self.window.resize(l_size),
+                        WindowEvent::Resized(l_size) => window.resize(l_size),
                         _ => ()
                     },
                     _ => ()
                 }
-            })
+            });
+            window.clear();
         }
+        window.swap_buffers();
     }
-
-    fn render(&self) {}
 }
