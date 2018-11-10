@@ -4,24 +4,19 @@ use std::fs::read_to_string;
 use std::mem;
 use std::ptr;
 use std::str;
+use std::path::Path;
 
 // Vertex data
 static VERTEX_DATA: [GLfloat; 6] = [0.0, 0.5, 0.5, -0.5, -0.5, -0.5];
 
-// Shder path
-static VS_SRC_PATH: &'static str = "./shaders/triangle.vert";
-static FS_SRC_PATH: &'static str = "./shaders/triangle.frag";
-
 // Shader source
-pub static VS_SRC: &'static str = &read_to_string(VS_SRC_PATH).unwrap();
 
-pub static FS_SRC: &'static str = &read_to_string(FS_SRC_PATH).unwrap();
+pub fn load_shader(path: &str) -> String {
+    read_to_string(Path::new(path)).unwrap()
+}
 
 // ↓ This is a horrible mess! TODO: clean this shit up!
-pub fn draw_triangle(program: GLuint) {
-    let mut vao = 0;
-    let mut vbo = 0;
-
+pub fn draw_triangle(program: GLuint, mut vao: u32, mut vbo: u32) {
     unsafe {
         // Create vertex array object and copy vertex data
         gl::GenVertexArrays(1, &mut vao);
@@ -106,12 +101,12 @@ pub fn link_program(vs: GLuint, fs: GLuint) -> GLuint {
     }
 }
 
-pub fn clean_up(program: GLuint, fs: GLuint, vs: GLuint) {
+pub fn clean_up(program: GLuint, fs: GLuint, vs: GLuint, vbo: u32, vao: u32) {
     unsafe {
         gl::DeleteProgram(program);
         gl::DeleteShader(fs);
         gl::DeleteShader(vs);
-        // gl::DeleteBuffers(1, vbo);
-        // gl::DeleteVertexArrays(1, vao);
+        gl::DeleteBuffers(1, &vbo);
+        gl::DeleteVertexArrays(1, &vao);
     }
 }

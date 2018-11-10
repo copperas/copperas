@@ -3,15 +3,15 @@ pub struct Time {
 }
 
 impl Time {
-    pub fn getDelta(&self) -> f64{
+    pub fn get_delta(&self) -> f64{
         self.delta
     }
 
-    pub fn setDelta(&mut self, delta: f64) {
+    pub fn set_delta(&mut self, delta: f64) {
         self.delta = delta;
     }
 
-    pub fn getTime() -> std::time::Instant {
+    pub fn get_time() -> std::time::Instant {
         std::time::Instant::now()
     }
 }

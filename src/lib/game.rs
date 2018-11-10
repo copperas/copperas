@@ -2,6 +2,9 @@ use lib::window::Window;
 use lib::graphics;
 use glutin::{Event, EventsLoop, WindowEvent};
 
+static VS_SRC_PATH: &'static str = "./shaders/triangle.vert";
+static FS_SRC_PATH: &'static str = "./shaders/triangle.frag";
+
 pub struct Game {
     events_loop: EventsLoop,
     window:      Window
@@ -42,12 +45,19 @@ impl Game {
 
     fn render(events_loop: &mut EventsLoop, window: &mut Window) {
         window.prepare();
+        // Load shaders
+        let vs_src = graphics::load_shader(VS_SRC_PATH);
+        let fs_src = graphics::load_shader(FS_SRC_PATH);
+
         // Create shaders
-        let vs      = graphics::compile_shader(graphics::VS_SRC, gl::VERTEX_SHADER);
-        let fs      = graphics::compile_shader(graphics::FS_SRC, gl::FRAGMENT_SHADER);
+        let vs      = graphics::compile_shader(&vs_src, gl::VERTEX_SHADER);
+        let fs      = graphics::compile_shader(&fs_src, gl::FRAGMENT_SHADER);
         let program = graphics::link_program(vs, fs);
 
-        graphics::draw_triangle(program);
+        let vao = 0;
+        let vbo = 0;
+
+        graphics::draw_triangle(program, vao, vbo);
 
         let mut running = true;
         while running {
@@ -67,6 +77,6 @@ impl Game {
 
             window.swap_buffers();
         }
-        graphics::clean_up(program, fs, vs);
+        graphics::clean_up(program, fs, vs, vbo, vao);
     }
 }
