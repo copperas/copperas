@@ -2,8 +2,8 @@ use lib::window::Window;
 use lib::graphics;
 use glutin::{Event, EventsLoop, WindowEvent};
 
-static VS_SRC_PATH: &'static str = "./shaders/triangle.vert";
-static FS_SRC_PATH: &'static str = "./shaders/triangle.frag";
+static VS_SRC_PATH: &'static str = "./src/lib/graphics/shaders/triangle.vert";
+static FS_SRC_PATH: &'static str = "./src/lib/graphics/shaders/triangle.frag";
 
 pub struct Game {
     events_loop: EventsLoop,

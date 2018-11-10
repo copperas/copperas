@@ -12,7 +12,8 @@ static VERTEX_DATA: [GLfloat; 6] = [0.0, 0.5, 0.5, -0.5, -0.5, -0.5];
 // Shader source
 
 pub fn load_shader(path: &str) -> String {
-    read_to_string(Path::new(path)).unwrap()
+    let path = Path::new(path);
+    read_to_string(path).unwrap()
 }
 
 // ↓ This is a horrible mess! TODO: clean this shit up!
