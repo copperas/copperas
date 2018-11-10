@@ -1,4 +1,5 @@
 use lib::window::Window;
+use lib::graphics;
 use glutin::{Event, EventsLoop, WindowEvent};
 
 pub struct Game {
@@ -41,9 +42,17 @@ impl Game {
 
     fn render(events_loop: &mut EventsLoop, window: &mut Window) {
         window.prepare();
+        // Create shaders
+        let vs      = graphics::compile_shader(graphics::VS_SRC, gl::VERTEX_SHADER);
+        let fs      = graphics::compile_shader(graphics::FS_SRC, gl::FRAGMENT_SHADER);
+        let program = graphics::link_program(vs, fs);
+
+        graphics::draw_triangle(program);
+
         let mut running = true;
         while running {
             events_loop.poll_events(|event| {
+                println!("{:?}", event);
                 match event {
                     Event::WindowEvent{ event, .. } => match event {
                         WindowEvent::CloseRequested  => running = false,
@@ -54,7 +63,10 @@ impl Game {
                 }
             });
             window.clear();
+            unsafe { gl::DrawArrays(gl::TRIANGLES, 0, 3); }
+
+            window.swap_buffers();
         }
-        window.swap_buffers();
+        graphics::clean_up(program, fs, vs);
     }
 }

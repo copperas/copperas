@@ -19,14 +19,13 @@ impl Window {
     }
 
     pub fn prepare(&mut self) {
-        unsafe {
-            self.window.make_current().unwrap();
-            gl::load_with(|s| self.window.get_proc_address(s) as *const _);
-        }
+        unsafe { self.window.make_current() }.unwrap();
+        gl::load_with(|s| self.window.get_proc_address(s) as *const _);
     }
 
     pub fn clear(&self) {
         unsafe {
+            gl::ClearColor(0.3, 0.3, 0.3, 1.0);
             gl::Clear(gl::COLOR_BUFFER_BIT);
         }
     }
