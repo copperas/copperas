@@ -1,28 +1,32 @@
-use lib::window::Window;
-use lib::graphics;
 use glutin::{Event, EventsLoop, WindowEvent};
+
+use lib::config::Config;
+use lib::event_manager::EventManager;
+use lib::graphics;
+use lib::window::Window;
+
 
 static VS_SRC_PATH: &'static str = "./src/lib/graphics/shaders/triangle.vert";
 static FS_SRC_PATH: &'static str = "./src/lib/graphics/shaders/triangle.frag";
 
-pub struct Game {
+pub struct Game<'a> {
+    config:      &'a Config,
     events_loop: EventsLoop,
     window:      Window
 }
 
-impl Game {
-    pub fn new() -> Game {
-        const WIDTH:  f64    = 750.0;
-        const HEIGHT: f64    = 468.75;
-        let   title:  String = String::from("C O P P E R A S");
-
+impl<'a> Game<'a> {
+    pub fn new(config: &mut Config) -> Game {
+        let title: &str = config.get_window().get_title();
+        let height: f64 = config.get_window().get_height();
+        let width:  f64 = config.get_window().get_width();
         println!("Create game loop");
         let events_loop = glutin::EventsLoop::new();
 
         println!("Create window");
-        let window      = Window::new(WIDTH, HEIGHT, &title, &events_loop);
+        let window      = Window::new(width, height, title, &events_loop);
 
-        Game { events_loop: events_loop, window: window }
+        Game { config: config, events_loop: events_loop, window: window }
     }
 
     pub fn start(&mut self) {
@@ -69,6 +73,7 @@ impl Game {
                         WindowEvent::Resized(l_size) => window.resize(l_size),
                         _ => ()
                     },
+                    // Event::DeviceEvent{ event, .. } => event_manager::manage(event),
                     _ => ()
                 }
             });

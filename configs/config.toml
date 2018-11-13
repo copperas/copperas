@@ -1,0 +1,10 @@
+[window]
+width         = 750.0
+height        = 468.75
+title         = "C O P E R A S"
+
+[player.actions]
+move_forward  = "W"
+move_left     = "A"
+move_backward = "S"
+move_right    = "D"

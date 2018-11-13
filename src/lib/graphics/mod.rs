@@ -7,7 +7,7 @@ use std::str;
 use std::path::Path;
 
 // Vertex data
-static VERTEX_DATA: [GLfloat; 6] = [0.0, 0.5, 0.5, -0.5, -0.5, -0.5];
+static VERTEX_DATA: [GLfloat; 6] = [0.0, 1.0, 0.5625, -0.5625, -0.5625, -0.5625];
 
 // Shader source
 
@@ -46,7 +46,8 @@ pub fn draw_triangle(program: GLuint, mut vao: u32, mut vbo: u32) {
         );
         gl::EnableVertexAttribArray(pos_attr as GLuint);
         gl::VertexAttribPointer(
-            pos_attr as GLuint, 2, gl::FLOAT, gl::FALSE as GLboolean, 0, ptr::null()
+            pos_attr as GLuint, 2, gl::FLOAT,
+            gl::FALSE as GLboolean, 0, ptr::null()
         );
     }
 }
