@@ -10,44 +10,45 @@ static VS_SRC_PATH: &'static str = "./src/lib/graphics/shaders/triangle.vert";
 static FS_SRC_PATH: &'static str = "./src/lib/graphics/shaders/triangle.frag";
 
 pub struct Game<'a> {
-    config:      &'a Config,
-    events_loop: EventsLoop,
-    window:      Window
+    config:        &'a Config,
+    events_loop:   EventsLoop,
+    event_manager: EventManager,
+    window:        Window
 }
 
 impl<'a> Game<'a> {
     pub fn new(config: &mut Config) -> Game {
-        let title: &str = config.get_window().get_title();
-        let height: f64 = config.get_window().get_height();
-        let width:  f64 = config.get_window().get_width();
+        let title: &str   = config.get_window().get_title();
+        let height: f64   = config.get_window().get_height();
+        let width:  f64   = config.get_window().get_width();
         println!("Create game loop");
-        let events_loop = glutin::EventsLoop::new();
+        let events_loop   = glutin::EventsLoop::new();
+        let event_manager = EventManager::new(&config);
 
         println!("Create window");
-        let window      = Window::new(width, height, title, &events_loop);
+        let window        = Window::new(width, height, title, &events_loop);
 
-        Game { config: config, events_loop: events_loop, window: window }
+        Game {
+            config: config, events_loop: events_loop, event_manager: event_manager,
+            window: window
+        }
     }
 
     pub fn start(&mut self) {
         self.run();
     }
 
-    pub fn stop(&self) {
-
-    }
-
-
-    fn get_events_loop_and_window(&mut self) -> (&mut EventsLoop, &mut Window) {
-        (&mut self.events_loop, &mut self.window)
+    fn get_events_loop_manager_and_window(&mut self) ->
+        (&mut EventsLoop, &EventManager, &mut Window) {
+        (&mut self.events_loop, &self.event_manager, &mut self.window)
     }
 
     fn run(&mut self) {
-        let (events_loop, window) = self.get_events_loop_and_window();
-        Game::render(events_loop, window)
+        let (eloop, emanager, window) = self.get_events_loop_manager_and_window();
+        Game::render(eloop, window, emanager)
     }
 
-    fn render(events_loop: &mut EventsLoop, window: &mut Window) {
+    fn render(events_loop: &mut EventsLoop, window: &mut Window, em: &EventManager) {
         window.prepare();
         // Load shaders
         let vs_src = graphics::load_shader(VS_SRC_PATH);
@@ -73,7 +74,7 @@ impl<'a> Game<'a> {
                         WindowEvent::Resized(l_size) => window.resize(l_size),
                         _ => ()
                     },
-                    // Event::DeviceEvent{ event, .. } => event_manager::manage(event),
+                    Event::DeviceEvent{ event, .. } => em.manage(event),
                     _ => ()
                 }
             });
