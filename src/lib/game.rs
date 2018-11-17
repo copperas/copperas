@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use glutin::{Event, EventsLoop, WindowEvent};
 
 use lib::config::Config;
@@ -49,6 +51,7 @@ impl<'a> Game<'a> {
     }
 
     fn render(events_loop: &mut EventsLoop, window: &mut Window, em: &EventManager) {
+        let now = Instant::now();
         window.prepare();
         // Load shaders
         let vs_src = graphics::load_shader(VS_SRC_PATH);
@@ -82,6 +85,7 @@ impl<'a> Game<'a> {
             unsafe { gl::DrawArrays(gl::TRIANGLES, 0, 3); }
 
             window.swap_buffers();
+            println!("Render took {:?}", now.elapsed());
         }
         graphics::clean_up(program, fs, vs, vbo, vao);
     }
