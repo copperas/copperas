@@ -6,7 +6,7 @@ extern crate toml;
 
 pub mod lib;
 
-use lib::config::Config;
+use lib::core::config::Config;
 use lib::game::Game;
 
 static CONFIG_PATH: &'static str = "./configs/config.toml";
