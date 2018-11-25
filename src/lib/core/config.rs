@@ -4,8 +4,9 @@ use std::path::Path;
 
 #[derive(Deserialize)]
 pub struct Config {
-    player: Player,
-    window: Window
+    controlls: Controlls,
+    time:      Time,
+    window:    Window
 }
 
 impl Config {
@@ -20,12 +21,16 @@ impl Config {
         }
     }
 
-    pub fn get_window(&self) -> &Window {
+    pub fn window(&self) -> &Window {
         &self.window
     }
 
-    pub fn get_player(&self) -> &Player {
-        &self.player
+    pub fn controlls(&self) -> &Controlls {
+        &self.controlls
+    }
+
+    pub fn time(&self) -> &Time {
+        &self.time
     }
 }
 
@@ -38,8 +43,19 @@ pub struct Actions {
 }
 
 #[derive(Deserialize)]
-pub struct Player {
+pub struct Controlls {
     actions: Actions
+}
+
+#[derive(Deserialize)]
+pub struct Time {
+    delta: u64
+}
+
+impl Time {
+    pub fn delta(&self) -> u64 {
+        self.delta
+    }
 }
 
 #[derive(Deserialize)]
@@ -50,15 +66,15 @@ pub struct Window {
 }
 
 impl Window {
-    pub fn get_width(&self) -> f64 {
+    pub fn width(&self) -> f64 {
         self.width
     }
 
-    pub fn get_height(&self) -> f64 {
+    pub fn height(&self) -> f64 {
         self.height
     }
 
-    pub fn get_title(&self) -> &str {
+    pub fn title(&self) -> &str {
         &self.title
     }
 }

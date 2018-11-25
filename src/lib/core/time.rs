@@ -1,17 +1,23 @@
-pub struct Time {
-    delta: f64
+use std::time::{ Duration, Instant };
+
+pub struct ClockManager {
+    delta:       Duration,
+    cycle_start: Instant
 }
 
-impl Time {
-    pub fn get_delta(&self) -> f64{
-        self.delta
+impl ClockManager {
+    pub fn new(u_delta: u64) -> ClockManager {
+        ClockManager {
+            delta:       Duration::from_micros(u_delta),
+            cycle_start: Instant::now()
+        }
     }
 
-    pub fn set_delta(&mut self, delta: f64) {
-        self.delta = delta;
+    pub fn start_cycle(&mut self) {
+        self.cycle_start = Instant::now();
     }
 
-    pub fn get_time() -> std::time::Instant {
-        std::time::Instant::now()
+    pub fn cycle_ended(&self) -> bool {
+        Instant::now().duration_since(self.cycle_start) >= self.delta
     }
 }

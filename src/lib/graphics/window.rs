@@ -1,36 +1,8 @@
-use glutin::{ContextBuilder, dpi::*, EventsLoop, GlContext, GlWindow, WindowBuilder};
+use lib::core::config::Window as WindowConfig;
 
-pub struct Window {
-    window: GlWindow
-}
-
-impl Window {
-    pub fn new(width: f64, height: f64, title: &str, gloop: &EventsLoop) -> Window {
-        let sizes   = LogicalSize::new(width, height);
-        let builder = WindowBuilder::new().with_title(title)
-                                          .with_dimensions(sizes);
-        let window = GlWindow::new(builder, ContextBuilder::new(), gloop).unwrap();
-        Window { window: window }
-    }
-
-    pub fn resize(&self, l_size: LogicalSize) {
-        let dpi_factor = self.window.get_hidpi_factor();
-        self.window.resize(l_size.to_physical(dpi_factor));
-    }
-
-    pub fn prepare(&mut self) {
-        unsafe { self.window.make_current() }.unwrap();
-        gl::load_with(|s| self.window.get_proc_address(s) as *const _);
-    }
-
-    pub fn clear(&self) {
-        unsafe {
-            gl::ClearColor(0.0, 0.0, 0.0, 0.0);
-            gl::Clear(gl::COLOR_BUFFER_BIT);
-        }
-    }
-
-    pub fn swap_buffers(&mut self) {
-        self.window.swap_buffers().unwrap();
-    }
+pub fn new(config: &WindowConfig, el: &winit::EventsLoop) -> winit::Window {
+    let wb = winit::WindowBuilder::new()
+        .with_dimensions(winit::dpi::LogicalSize::new(config.width(), config.height()))
+        .with_title(config.title());
+    wb.build(el).unwrap()
 }

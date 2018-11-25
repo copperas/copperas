@@ -1,11 +1,11 @@
-use lib::config::Config;
+use lib::core::config::Controlls;
 
 pub struct EventManager {}
 
 impl EventManager {
-  pub fn new(config: &Config) -> EventManager {
+  pub fn new(config: &Controlls) -> EventManager {
       EventManager {}
   }
 
-  pub fn manage(&self, event: glutin::DeviceEvent) {}
+  // pub fn manage(&self, event: glutin::DeviceEvent) {}
 }
