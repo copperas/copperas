@@ -1,23 +1,24 @@
-use std::sync::mpsc::sync_channel;
-use std::sync::mpsc::{ SyncSender, Receiver};
+use std::sync::mpsc::channel;
+use std::sync::mpsc::{ Sender, Receiver, TryRecvError};
 
 pub struct MessageBus {
-    sender:   SyncSender<Message>,
+    sender:   Sender<Message>,
     receiver: Receiver<Message>
 }
 
 impl MessageBus {
-    pub fn new(bound: usize) -> Self {
-        let (sender, receiver) = sync_channel(bound);
+    pub fn new(_bound: usize) -> Self {
+        let (sender, receiver) = channel();
         Self { sender: sender, receiver: receiver }
     }
 
-    pub fn new_sender(&self) -> SyncSender<Message> {
+    pub fn new_sender(&self) -> Sender<Message> {
         self.sender.clone()
     }
 
-    pub fn receiver(&self) -> &Receiver<Message> {
-        &self.receiver
+    pub fn try_recv(&self) -> Result<Message, TryRecvError> {
+        println!("Receiving message!");
+        self.receiver.try_recv()
     }
 }
 
@@ -36,8 +37,8 @@ impl Message {
         &self.title
     }
 
-    pub fn data(&self) -> Box<MessageData> {
-        self.data
+    pub fn data(&self) -> &Box<MessageData> {
+        &self.data
     }
 }
 

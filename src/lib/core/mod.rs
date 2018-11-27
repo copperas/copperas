@@ -4,7 +4,7 @@ pub mod menu;
 pub mod message_bus;
 pub mod time;
 
-use std::sync::mpsc::RecvError;
+use std::sync::mpsc::TryRecvError;
 
 use lib::graphics;
 
@@ -24,17 +24,15 @@ pub fn run(config_path: &str) {
     let mut running          = true;
     while running {
         event_manager.manage_events();
-        let received = message_bus.receiver().recv();
-        println!("I got to line 27!");
-        let close = close(received);
-        if close { running = false }
+        
+        if close(message_bus.try_recv()) { running = false }
     }
 }
 
-fn close(received: Result<Message, RecvError>) -> bool {
-    println!("Before the trouble, line 33");
+fn close(received: Result<Message, TryRecvError>) -> bool {
+    let success = |message| { println!("{:?}", message); true };
     match received {
-        Ok(message) => *message.data() == CloseWindow::Close,
-        Err(error)  => false
+        Ok(message) => success(message),
+        Err(_)  => false
     }
 }

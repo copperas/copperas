@@ -1,4 +1,4 @@
-use std::sync::mpsc::SyncSender;
+use std::sync::mpsc::Sender;
 
 use winit::{Event, EventsLoop, DeviceEvent, WindowEvent};
 
@@ -7,11 +7,11 @@ use lib::core::message_bus::{ Message, MessageData};
 
 pub struct EventManager {
     events_loop: EventsLoop,
-    sender:      SyncSender<Message>
+    sender:      Sender<Message>
 }
 
 impl EventManager {
-    pub fn new(config: &Controlls, sender: SyncSender<Message>) -> Self {
+    pub fn new(config: &Controlls, sender: Sender<Message>) -> Self {
         Self { events_loop: EventsLoop::new(), sender: sender }
     }
 
@@ -44,7 +44,7 @@ impl EventManager {
 }
 
 struct DeviceEventPorcessor {
-    sender: SyncSender<Message>
+    sender: Sender<Message>
 }
 
 impl DeviceEventPorcessor {
@@ -52,7 +52,7 @@ impl DeviceEventPorcessor {
 }
 
 struct WindowEventProcessor {
-    sender: SyncSender<Message>
+    sender: Sender<Message>
 }
 
 impl WindowEventProcessor {
