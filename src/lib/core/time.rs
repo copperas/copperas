@@ -6,9 +6,9 @@ pub struct ClockManager {
 }
 
 impl ClockManager {
-    pub fn new(u_delta: u64) -> ClockManager {
-        ClockManager {
-            delta:       Duration::from_micros(u_delta),
+    pub fn new(u_delta: u64) -> Self {
+        Self {
+            delta:       Duration::from_nanos(u_delta),
             cycle_start: Instant::now()
         }
     }

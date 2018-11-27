@@ -33,7 +33,7 @@ impl Config {
         &self.time
     }
 }
-
+#[allow(dead_code)]
 #[derive(Deserialize)]
 pub struct Actions {
     move_forward:  String,
