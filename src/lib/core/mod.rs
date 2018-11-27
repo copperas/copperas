@@ -10,21 +10,22 @@ use lib::graphics;
 
 use self::config::Config;
 use self::event_manager::{ EventManager, CloseWindow };
-use self::message_bus::{ MessageBus, Message };
+use self::message_bus::{ MessageBus, address::Address, message::Message };
 use self::time::ClockManager;
 
 #[allow(unused_mut)]
 #[allow(unused_variables)]
 pub fn run(config_path: &str) {
     let mut config           = Config::new(config_path);
-    let message_bus          = MessageBus::new(0); // Set propper length later
+    let mut message_bus      = MessageBus::new(0); // Set propper length later
     let mut clock_manager    = ClockManager::new(config.time().delta());
-    let mut event_manager    = EventManager::new(config.controlls(), message_bus.new_sender());
+    let mut event_manager    =
+        EventManager::new(config.controlls(), message_bus.register_service(Address::EventManager));
     let mut window           = graphics::window::new(config.window(), &event_manager);
     let mut running          = true;
     while running {
         event_manager.manage_events();
-        
+
         if close(message_bus.try_recv()) { running = false }
     }
 }

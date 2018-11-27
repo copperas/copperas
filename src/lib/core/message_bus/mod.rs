@@ -1,59 +1,35 @@
+pub mod message;
+pub mod message_data;
+pub mod address;
+
 use std::sync::mpsc::channel;
 use std::sync::mpsc::{ Sender, Receiver, TryRecvError};
+use std::collections::HashMap;
+// use std::vec::Vec;
+
+use self::{ message::Message, message_data::MessageData, address::Address };
 
 pub struct MessageBus {
     sender:   Sender<Message>,
-    receiver: Receiver<Message>
+    receiver: Receiver<Message>,
+    // services: Vec<(Address, Sender<Message>, Receiver<Message>)>
+    services: HashMap<Address, Sender<Message>>
 }
 
 impl MessageBus {
     pub fn new(_bound: usize) -> Self {
         let (sender, receiver) = channel();
-        Self { sender: sender, receiver: receiver }
+        Self { sender: sender, receiver: receiver, services: HashMap::new() }
     }
 
-    pub fn new_sender(&self) -> Sender<Message> {
-        self.sender.clone()
+    pub fn register_service(&mut self, service: Address) -> (Sender<Message>, Receiver<Message>) {
+        let (sender, receiver) = channel();
+        self.services.insert(service, sender);
+        (self.sender.clone(), receiver)
     }
 
     pub fn try_recv(&self) -> Result<Message, TryRecvError> {
         println!("Receiving message!");
         self.receiver.try_recv()
-    }
-}
-
-#[derive(Debug)]
-pub struct Message {
-    title: String,
-    data:  Box<MessageData>
-}
-
-impl Message {
-    pub fn new(title: String, data: Box<MessageData>) -> Self {
-        Self { title: title, data: data }
-    }
-
-    pub fn title(&self) -> &str {
-        &self.title
-    }
-
-    pub fn data(&self) -> &Box<MessageData> {
-        &self.data
-    }
-}
-
-pub trait MessageData {}
-
-impl<T> MessageData for T  where T: Sized {}
-
-impl std::fmt::Debug for MessageData {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Some data here (NOTE: This is a stub!)") // TODO: Implement a better formatter
-    }
-}
-
-impl std::cmp::PartialEq for MessageData {
-    fn eq(&self, other: &(dyn MessageData + 'static)) -> bool {
-        self == other
     }
 }

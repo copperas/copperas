@@ -1,18 +1,24 @@
-use std::sync::mpsc::Sender;
+use std::sync::mpsc::{ Receiver, Sender };
 
 use winit::{Event, EventsLoop, DeviceEvent, WindowEvent};
 
 use lib::core::config::Controlls;
-use lib::core::message_bus::{ Message, MessageData};
+use lib::core::message_bus::{
+    message::Message,
+    message_data::MessageData,
+    address::Address
+};
 
 pub struct EventManager {
     events_loop: EventsLoop,
-    sender:      Sender<Message>
+    sender:      Sender<Message>,
+    receiver:    Receiver<Message>
 }
 
 impl EventManager {
-    pub fn new(config: &Controlls, sender: Sender<Message>) -> Self {
-        Self { events_loop: EventsLoop::new(), sender: sender }
+    pub fn new(config: &Controlls, snr: (Sender<Message>, Receiver<Message>)) -> Self {
+        let (sender, receiver) = snr;
+        Self { events_loop: EventsLoop::new(), sender: sender, receiver: receiver }
     }
 
     pub fn events_loop(&self) -> &EventsLoop {
@@ -67,7 +73,7 @@ impl WindowEventProcessor {
     fn close_requested(&self) {
         let title   = String::from("Close Requested");
         let data    = Box::new(CloseWindow::Close);
-        let message = Message::new(title, data);
+        let message = Message::new(title, data, Address::Core, Address::EventManager);
         &self.sender.send(message).unwrap();
     }
 }
