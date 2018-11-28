@@ -25,8 +25,7 @@ pub fn run(config_path: &str) {
     let mut running          = true;
     while running {
         event_manager.manage_events();
-
-        if close(message_bus.try_recv()) { running = false }
+        message_bus.pump_message();
     }
 }
 

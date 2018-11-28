@@ -20,4 +20,12 @@ impl Message {
     pub fn data(&self) -> &Box<MessageData> {
         &self.data
     }
+
+    pub fn receiver(&self) -> Address {
+        self.receiver
+    }
+
+    pub fn sender(&self) -> Address {
+        self.sender
+    }
 }

@@ -28,8 +28,27 @@ impl MessageBus {
         (self.sender.clone(), receiver)
     }
 
-    pub fn try_recv(&self) -> Result<Message, TryRecvError> {
-        println!("Receiving message!");
+    pub fn pump_message(&self) {
+        match self.try_recv() {
+            Ok(message) => self.send(message),
+            Err(error)  => println!("Tried to recieve message, got error: {:?}", error)
+        }
+    }
+
+    fn try_recv(&self) -> Result<Message, TryRecvError> {
         self.receiver.try_recv()
+    }
+
+    fn pick_sender(&self, recepient: Address) -> &Sender<Message> {
+        let recp = recepient;
+        self.services.get(&recp).unwrap()
+    }
+
+    fn send(&self, message: Message) {
+        let sender = self.pick_sender(message.receiver());
+        match sender.send(message) {
+            Ok(_)      => (),
+            Err(error) => println!("Tried to send message, got error: {:?}", error)
+        }
     }
 }
