@@ -1,6 +1,6 @@
+pub mod address;
 pub mod message;
 pub mod message_data;
-pub mod address;
 
 use std::sync::mpsc::channel;
 use std::sync::mpsc::{ Sender, Receiver, TryRecvError};
@@ -12,7 +12,6 @@ use self::{ message::Message, message_data::MessageData, address::Address };
 pub struct MessageBus {
     sender:   Sender<Message>,
     receiver: Receiver<Message>,
-    // services: Vec<(Address, Sender<Message>, Receiver<Message>)>
     services: HashMap<Address, Sender<Message>>
 }
 

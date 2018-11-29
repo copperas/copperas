@@ -5,7 +5,7 @@ extern crate toml;
 extern crate winit;
 pub mod lib;
 
-use lib::core;
+use lib::core::Core;
 // use lib::game::Game;
 
 static CONFIG_PATH: &'static str = "./configs/config.toml";
@@ -13,5 +13,5 @@ static CONFIG_PATH: &'static str = "./configs/config.toml";
 // TODO: move all static const here if possible or pipe 'em through lib::config::Config
 
 fn main() {
-    core::run(CONFIG_PATH);
+    Core::run(CONFIG_PATH);
 }
