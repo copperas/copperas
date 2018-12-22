@@ -3,6 +3,7 @@ use std::sync::mpsc::{ Receiver, Sender };
 use winit::{Event, EventsLoop, DeviceEvent, WindowEvent};
 
 use lib::core::config::Controlls;
+use lib::core::Game;
 
 pub struct EventManager {
     events_loop: EventsLoop
@@ -17,7 +18,7 @@ impl EventManager {
         &self.events_loop
     }
 
-    pub fn manage_events(&mut self, mut running: bool) {
+    pub fn manage_events(&mut self, game: &mut Game) {
         let a: u64 = 345;
         let wep = self.new_window_event_processor();
         let dep = self.new_device_event_processor();
@@ -25,7 +26,7 @@ impl EventManager {
             // println!("{:?}", event);
             match event {
                 Event::DeviceEvent { event, ..}  => dep.process(event),
-                Event::WindowEvent { event, .. } => wep.process(event),
+                Event::WindowEvent { event, .. } => wep.process(event, game),
                 _ => ()
             };
         });
@@ -50,19 +51,12 @@ impl DeviceEventPorcessor {
 struct WindowEventProcessor {}
 
 impl WindowEventProcessor {
-    pub fn process(&self, event: WindowEvent) {
+    pub fn process(&self, event: WindowEvent, game: &mut Game) {
         println!("{:?}", event);
         match event {
-            WindowEvent::CloseRequested => self.close_requested(),
+            WindowEvent::CloseRequested => game.stop(),
             _ => ()
         }
-    }
-
-    fn close_requested(&self) {
-        let title   = String::from("Close Requested");
-        let data    = EventMessage { data: CloseWindow::Close };
-        let message = Message::new(title, data, Address::Core, Address::EventManager);
-        &self.sender.send(message).unwrap();
     }
 }
 

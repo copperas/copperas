@@ -18,12 +18,30 @@ use self::time::ClockManager;
 #[allow(unused_mut)]
 #[allow(unused_variables)]
 pub fn run(config_path: &str) {
-    let mut running       = true;
+    let mut game          = Game::new();
     let mut config        = Config::new(config_path);
     let mut clock_manager = ClockManager::new(config.time().delta());
     let mut event_manager = EventManager::new(config.controlls());
     let mut window        = graphics::window::new(config.window(), &event_manager);
-    while running {
-        event_manager.manage_events(running);
+    while game.running() {
+        event_manager.manage_events(&mut game);
+    }
+}
+
+pub struct Game {
+    running: bool
+}
+
+impl Game {
+    fn new() -> Self {
+        Self { running: true }
+    }
+
+    fn stop(&mut self) {
+        self.running = false
+    }
+
+    fn running(&self) -> bool {
+        self.running
     }
 }
