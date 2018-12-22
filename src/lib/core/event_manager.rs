@@ -3,29 +3,21 @@ use std::sync::mpsc::{ Receiver, Sender };
 use winit::{Event, EventsLoop, DeviceEvent, WindowEvent};
 
 use lib::core::config::Controlls;
-use lib::core::message_bus::{
-    message::Message,
-    message_data::MessageData,
-    address::Address
-};
 
 pub struct EventManager {
-    events_loop: EventsLoop,
-    sender:      Sender<Message>,
-    receiver:    Receiver<Message>
+    events_loop: EventsLoop
 }
 
 impl EventManager {
-    pub fn new(config: &Controlls, snr: (Sender<Message>, Receiver<Message>)) -> Self {
-        let (sender, receiver) = snr;
-        Self { events_loop: EventsLoop::new(), sender: sender, receiver: receiver }
+    pub fn new(config: &Controlls) -> Self {
+        Self { events_loop: EventsLoop::new() }
     }
 
     pub fn events_loop(&self) -> &EventsLoop {
         &self.events_loop
     }
 
-    pub fn manage_events(&mut self) {
+    pub fn manage_events(&mut self, mut running: bool) {
         let a: u64 = 345;
         let wep = self.new_window_event_processor();
         let dep = self.new_device_event_processor();
@@ -40,26 +32,22 @@ impl EventManager {
     }
 
     fn new_device_event_processor(&self) -> DeviceEventPorcessor {
-        DeviceEventPorcessor { sender: self.sender.clone() }
+        DeviceEventPorcessor {}
     }
 
     fn new_window_event_processor(&self) -> WindowEventProcessor {
-        WindowEventProcessor { sender: self.sender.clone() }
+        WindowEventProcessor {}
     }
 
 }
 
-struct DeviceEventPorcessor {
-    sender: Sender<Message>
-}
+struct DeviceEventPorcessor;
 
 impl DeviceEventPorcessor {
     pub fn process(&self, event: DeviceEvent) {}
 }
 
-struct WindowEventProcessor {
-    sender: Sender<Message>
-}
+struct WindowEventProcessor {}
 
 impl WindowEventProcessor {
     pub fn process(&self, event: WindowEvent) {
@@ -72,10 +60,14 @@ impl WindowEventProcessor {
 
     fn close_requested(&self) {
         let title   = String::from("Close Requested");
-        let data    = Box::new(CloseWindow::Close);
+        let data    = EventMessage { data: CloseWindow::Close };
         let message = Message::new(title, data, Address::Core, Address::EventManager);
         &self.sender.send(message).unwrap();
     }
 }
 
 pub enum CloseWindow { Close }
+
+pub struct EventMessage {
+
+}
